@@ -1,7 +1,7 @@
 # React Admin JSON view ![GitHub release (latest by date)](https://img.shields.io/github/v/release/MrHertal/react-admin-json-view) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/MrHertal/react-admin-json-view/Node.js%20CI)
 
 JSON field and input for [react-admin](https://github.com/marmelab/react-admin).
-Built with [react-json-view](https://github.com/mac-s-g/react-json-view).
+Built with [react18-json-view](https://github.com/mac-s-g/react18-json-view).
 
 Field:
 
@@ -31,7 +31,7 @@ export const ExampleShow = (props) => (
         source="example"
         jsonString={false} // Set to true if the value is a string, default: false
         reactJsonOptions={{
-          // Props passed to react-json-view
+          // Props passed to react18-json-view
           name: null,
           collapsed: true,
           enableClipboard: false,
@@ -50,7 +50,7 @@ export const ExampleEdit = (props) => (
         validate={[required()]}
         jsonString={false} // Set to true if the value is a string, default: false
         reactJsonOptions={{
-          // Props passed to react-json-view
+          // Props passed to react18-json-view
           name: null,
           collapsed: true,
           enableClipboard: false,

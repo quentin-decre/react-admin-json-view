@@ -1,17 +1,18 @@
 import { FormHelperText } from "@mui/material";
 import React from "react";
 import { InputHelperText, InputProps, Labeled, useInput } from "react-admin";
-import ReactJson, {
-  InteractionProps,
-  ReactJsonViewProps,
-} from "react-json-view";
+import ReactJson, { JsonViewProps } from "react18-json-view";
 
 type Props = {
   source: string;
   label?: string;
   helperText?: string;
   jsonString?: boolean;
-  reactJsonOptions?: Omit<ReactJsonViewProps, "src">;
+  reactJsonOptions?: Omit<JsonViewProps, "src"> & {
+    onEdit?: JsonViewProps["onEdit"] | false;
+    onAdd?: JsonViewProps["onAdd"] | false;
+    onDelete?: JsonViewProps["onDelete"] | false;
+  };
 } & InputProps;
 
 export const JsonInput: React.FC<Props> = (props) => {
@@ -22,50 +23,41 @@ export const JsonInput: React.FC<Props> = (props) => {
     isRequired,
   } = useInput(props);
 
-  const {
-    source,
-    label,
-    helperText,
-    jsonString = false,
-    reactJsonOptions,
-  } = props;
+  const { source, label, helperText, jsonString = false, reactJsonOptions } = props;
 
   function change(updatedSrc: any) {
     let updatedValue = updatedSrc;
 
     if (jsonString) {
-      updatedValue =
-        Object.keys(updatedSrc).length === 0
-          ? null
-          : JSON.stringify(updatedSrc);
+      updatedValue = Object.keys(updatedSrc).length === 0 ? null : JSON.stringify(updatedSrc);
     }
 
     onChange(updatedValue);
   }
 
-  function onEdit(edit: InteractionProps) {
-    change(edit.updated_src);
+  const onEdit: JsonViewProps["onEdit"] = (edit) => {
+    change(edit.src);
 
     if (reactJsonOptions?.onEdit) {
       reactJsonOptions.onEdit(edit);
     }
-  }
+  };
 
-  function onAdd(add: InteractionProps) {
-    change(add.updated_src);
+  const onAdd: JsonViewProps["onAdd"] = (add) => {
+    change(add.src);
 
     if (reactJsonOptions?.onAdd) {
       reactJsonOptions.onAdd(add);
     }
-  }
+  };
 
-  function onDelete(del: InteractionProps) {
-    change(del.updated_src);
+  const onDelete: JsonViewProps["onDelete"] = (del) => {
+    change(del.src);
 
     if (reactJsonOptions?.onDelete) {
       reactJsonOptions.onDelete(del);
     }
-  }
+  };
 
   let src = value;
 
@@ -79,17 +71,18 @@ export const JsonInput: React.FC<Props> = (props) => {
         <ReactJson
           {...reactJsonOptions}
           src={src || {}}
-          onEdit={reactJsonOptions?.onEdit === false ? false : onEdit}
-          onAdd={reactJsonOptions?.onAdd === false ? false : onAdd}
-          onDelete={reactJsonOptions?.onDelete === false ? false : onDelete}
+          editable={{
+            edit: reactJsonOptions?.onEdit !== false,
+            add: reactJsonOptions?.onAdd !== false,
+            delete: reactJsonOptions?.onDelete !== false,
+          }}
+          onEdit={reactJsonOptions?.onEdit === false ? undefined : onEdit}
+          onAdd={reactJsonOptions?.onAdd === false ? undefined : onAdd}
+          onDelete={reactJsonOptions?.onDelete === false ? undefined : onDelete}
         />
       </Labeled>
       <FormHelperText error={(isTouched || isSubmitted) && !!error}>
-        <InputHelperText
-          touched={isTouched || isSubmitted}
-          error={error?.message}
-          helperText={helperText}
-        />
+        <InputHelperText touched={isTouched || isSubmitted} error={error?.message} helperText={helperText} />
       </FormHelperText>
     </div>
   );
